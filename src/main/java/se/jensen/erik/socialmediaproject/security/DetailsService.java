@@ -12,7 +12,7 @@ public class DetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    DetailsService(UserRepository userRepository) {
+    public DetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -23,6 +23,7 @@ public class DetailsService implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found: " + username));
+
 
         return new MyUserDetails(user);
     }

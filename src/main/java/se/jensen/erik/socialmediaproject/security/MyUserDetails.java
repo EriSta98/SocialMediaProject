@@ -26,7 +26,7 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-    // antar att role är något i stil med "USER" eller "ADMIN"
+    // "USER" eller "ADMIN"
         return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
     }
 
