@@ -39,10 +39,7 @@ import java.util.Base64;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final DetailsService detailsService;
-
     public SecurityConfig(DetailsService detailsService) {
-        this.detailsService = detailsService;
     }
 
     @Bean
