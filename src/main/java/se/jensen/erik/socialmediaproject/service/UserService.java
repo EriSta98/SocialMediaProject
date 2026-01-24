@@ -3,6 +3,8 @@ package se.jensen.erik.socialmediaproject.service;
 
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import se.jensen.erik.socialmediaproject.dto.UserRequestDto;
@@ -21,20 +23,22 @@ import java.util.Optional;
 @Service
 public class UserService {
 
+    private final Logger logger = LoggerFactory.getLogger(UserService.class); // AI-skapad kod
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
 
     public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
     }
 
     public UserResponseDto update(Long id, UserRequestDto dto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    logger.warn("User not found with id: {}", id); // AI-skapad kod
+                    return new RuntimeException("User not found");
+                });
 
         user.setUsername(dto.username());
         user.setPassword(dto.password());
@@ -64,7 +68,8 @@ public class UserService {
     public UserResponseDto getById(Long id){
         Optional<User> opt = userRepository.findById(id);
 
-        if(!opt.isPresent()){
+        if(opt.isPresent()){
+            logger.warn("User not found with id: {}", id); // AI-skapad kod
             throw new NoSuchElementException("User not found with: ");
         }
         return UserMapper.toDto(opt.get());
@@ -118,9 +123,15 @@ public class UserService {
 
     public UserWithPostsResponseDto getUserWithPosts(Long id) {
         User user = userRepository.findUserWithPosts(id)
-                .orElseThrow(() -> new NoSuchElementException("User not found with: " + id));
+                .orElseThrow(() -> {
+                    logger.warn("User not found with id: {}", id); // AI-skapad kod
+                    return new NoSuchElementException("User not found with: " + id);
+                }); // AI-skapade kod
 
         UserWithPostsResponseDto dto = UserMapper.toWithPostsDto(user);
         return dto;
     }
+
+
+
 }
