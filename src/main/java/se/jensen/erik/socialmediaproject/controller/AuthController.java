@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.jensen.erik.socialmediaproject.dto.LoginRequestDTO;
 import se.jensen.erik.socialmediaproject.dto.LoginResponseDTO;
+import se.jensen.erik.socialmediaproject.security.MyUserDetails;
 import se.jensen.erik.socialmediaproject.security.TokenService;
 
 @RestController
@@ -36,9 +37,15 @@ public class AuthController {
                         loginRequest.password()
                 )
         );
+
+        MyUserDetails details = (MyUserDetails) auth.getPrincipal();
+        details.getId();
+
         String token = tokenService.generateToken(auth);
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+
+        return ResponseEntity.ok(new LoginResponseDTO(token, details.getId()));
     }
+
 
 
 }

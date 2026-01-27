@@ -23,7 +23,7 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    private final Logger logger = LoggerFactory.getLogger(UserService.class); // AI-skapad kod
+    private final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -36,7 +36,7 @@ public class UserService {
     public UserResponseDto update(Long id, UserRequestDto dto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> {
-                    logger.warn("User not found with id: {}", id); // AI-skapad kod
+                    logger.warn("User not found with id: {}", id);
                     return new RuntimeException("User not found");
                 });
 
@@ -69,7 +69,7 @@ public class UserService {
         Optional<User> opt = userRepository.findById(id);
 
         if(opt.isPresent()){
-            logger.warn("User not found with id: {}", id); // AI-skapad kod
+            logger.warn("User not found with id: {}", id); //
             throw new NoSuchElementException("User not found with: ");
         }
         return UserMapper.toDto(opt.get());
@@ -124,9 +124,9 @@ public class UserService {
     public UserWithPostsResponseDto getUserWithPosts(Long id) {
         User user = userRepository.findUserWithPosts(id)
                 .orElseThrow(() -> {
-                    logger.warn("User not found with id: {}", id); // AI-skapad kod
+                    logger.warn("User not found with id: {}", id);
                     return new NoSuchElementException("User not found with: " + id);
-                }); // AI-skapade kod
+                });
 
         UserWithPostsResponseDto dto = UserMapper.toWithPostsDto(user);
         return dto;

@@ -1,8 +1,8 @@
 package se.jensen.erik.socialmediaproject.service;
 
 
-import org.slf4j.Logger; // AI-Skapad kod.
-import org.slf4j.LoggerFactory; // AI-Skapad kod.
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import se.jensen.erik.socialmediaproject.dto.PostRequestDto;
 import se.jensen.erik.socialmediaproject.dto.PostResponseDto;
@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
 @Service
 public class PostService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PostService.class); // AI-Skapad kod.
+    private static final Logger logger = LoggerFactory.getLogger(PostService.class);
     private final UserRepository userRepository;
     private final PostRepository postRepository;
 
@@ -35,7 +35,7 @@ public class PostService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
-                    String message = "User not found with id " + userId; // AI-Skapad kod.
+                    String message = "User not found with id " + userId;
                     logger.warn(message);
                     return new NoSuchElementException(message);
                 });
