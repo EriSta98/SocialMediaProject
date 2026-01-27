@@ -82,6 +82,12 @@ public class SecurityConfig {
     }
 
 
+    /**
+     * Applicerar en säkerhetskedja för inkommande http förfrågningar.
+     * @param http
+     * @return Security filter chain
+     * @throws Exception
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));

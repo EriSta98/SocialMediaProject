@@ -1,4 +1,4 @@
-package se.jensen.erik.socialmediaproject.security;
+package se.jensen.erik.socialmediaproject.service;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

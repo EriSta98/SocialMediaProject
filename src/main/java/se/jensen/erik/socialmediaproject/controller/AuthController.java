@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import se.jensen.erik.socialmediaproject.dto.LoginRequestDTO;
 import se.jensen.erik.socialmediaproject.dto.LoginResponseDTO;
 import se.jensen.erik.socialmediaproject.security.MyUserDetails;
-import se.jensen.erik.socialmediaproject.security.TokenService;
+import se.jensen.erik.socialmediaproject.service.TokenService;
 
 @RestController
 @RequestMapping("/request-token")

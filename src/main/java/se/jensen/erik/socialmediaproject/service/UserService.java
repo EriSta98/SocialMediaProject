@@ -26,11 +26,13 @@ public class UserService {
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userMapper = userMapper;
     }
 
     public UserResponseDto update(Long id, UserRequestDto dto) {
@@ -68,11 +70,10 @@ public class UserService {
     public UserResponseDto getById(Long id){
         Optional<User> opt = userRepository.findById(id);
 
-        if(opt.isPresent()){
-            logger.warn("User not found with id: {}", id); //
+        if(!opt.isPresent()){
             throw new NoSuchElementException("User not found with: ");
         }
-        return UserMapper.toDto(opt.get());
+        return userMapper.toDto(opt.get());
     }
 
 
