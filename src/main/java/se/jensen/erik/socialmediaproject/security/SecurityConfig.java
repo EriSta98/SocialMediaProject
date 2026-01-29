@@ -83,7 +83,7 @@ public class SecurityConfig {
 
 
     /**
-     * Applicerar en säkerhetskedja för inkommande http förfrågningar.
+     * Applicerar ett säkerhetsfilter för inkommande http förfrågningar.
      * @param http
      * @return Security filter chain
      * @throws Exception

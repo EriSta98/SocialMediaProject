@@ -12,13 +12,14 @@ import java.util.List;
 
 @Component
 public class UserMapper {
+
     public static User fromDto(UserRequestDto dto) {
         User user = new User();
         setUserValues(user, dto);
         return user;
     }
 
-    public static User fromDto(User user, UserRequestDto dto) {
+    public User fromDto(User user, UserRequestDto dto) {
         setUserValues(user, dto);
         return user;
     }
@@ -34,7 +35,7 @@ public class UserMapper {
     }
 
     public static UserWithPostsResponseDto toWithPostsDto(User user) {
-        if(user == null) {
+        if (user == null) {
             return null;
         }
 
@@ -51,17 +52,18 @@ public class UserMapper {
                 ))
                 .toList();
 
-                return new UserWithPostsResponseDto(userDto, postDtos);
+        return new UserWithPostsResponseDto(userDto, postDtos);
     }
 
-
-
-
-
     public static UserResponseDto toDto(User user) {
-        UserResponseDto dto = new UserResponseDto(
-                user.getId(),user.getUsername(),user.getRole(),user.getDisplayName(),
-                user.getProfileImagePath(),user.getEmail(),user.getBio());
-        return dto;
+        return new UserResponseDto(
+                user.getId(),
+                user.getUsername(),
+                user.getRole(),
+                user.getDisplayName(),
+                user.getProfileImagePath(),
+                user.getEmail(),
+                user.getBio()
+        );
     }
 }

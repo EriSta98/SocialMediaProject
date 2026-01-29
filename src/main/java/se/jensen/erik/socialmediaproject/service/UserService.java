@@ -1,8 +1,5 @@
 package se.jensen.erik.socialmediaproject.service;
 
-
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,7 +20,7 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    private final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
@@ -38,9 +35,10 @@ public class UserService {
     public UserResponseDto update(Long id, UserRequestDto dto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> {
-                    logger.warn("User not found with id: {}", id);
+                    logger.warn("User not found for update with id: {}", id);
                     return new RuntimeException("User not found");
                 });
+
 
         user.setUsername(dto.username());
         user.setPassword(dto.password());
@@ -60,10 +58,15 @@ public class UserService {
 
 
     public List<UserResponseDto> getAllUsers() {
-        return userRepository.findAll()
-                .stream()
-                .map(UserMapper::toDto)
-                .toList();
+        List<User> users = userRepository.findAll();
+
+        if (users.isEmpty()){
+            logger.info("No users found in database");
+            throw new RuntimeException("No Users found in database");
+        } else if(users.size() == 1){
+            throw new IllegalArgumentException("Only one user found in database.");
+        }
+        return users.stream().map(user -> userMapper.toDto(user)).toList();
     }
 
 
@@ -71,9 +74,10 @@ public class UserService {
         Optional<User> opt = userRepository.findById(id);
 
         if(!opt.isPresent()){
-            throw new NoSuchElementException("User not found with: ");
+            logger.warn("User not found with id: {}", id);
+            throw new NoSuchElementException("User not found with: " + id);
         }
-        return userMapper.toDto(opt.get());
+        return UserMapper.toDto(opt.get());
     }
 
 
@@ -86,8 +90,9 @@ public class UserService {
         );
 
         if(exists){
+            logger.info("Attempt to add user with existing username or email: {} / {}", user.getUsername(), user.getEmail());
             throw new IllegalArgumentException(
-                    "User med detta username eller email finns redan i databasen"
+                    "User with this username or email already exists"
             );
         }
 
@@ -99,15 +104,7 @@ public class UserService {
 
 
     private UserResponseDto toDto(User user){
-        return new UserResponseDto(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getRole(),
-                user.getDisplayName(),
-                user.getBio(),
-                user.getProfileImagePath()
-        );
+        return UserMapper.toDto(user);
     }
 
     private User fromDto(UserRequestDto userDto){
@@ -125,7 +122,7 @@ public class UserService {
     public UserWithPostsResponseDto getUserWithPosts(Long id) {
         User user = userRepository.findUserWithPosts(id)
                 .orElseThrow(() -> {
-                    logger.warn("User not found with id: {}", id);
+                    logger.warn("User with posts not found with id: {}", id);
                     return new NoSuchElementException("User not found with: " + id);
                 });
 

@@ -11,6 +11,7 @@ public record UserResponseDto(
         String email,
         String bio) {
 
+
     public static UserResponseDto fromEntity(User user) {
 
         return new UserResponseDto(
@@ -23,6 +24,8 @@ public record UserResponseDto(
                 user.getProfileImagePath()
         );
     }
+
+
 }
 
 
