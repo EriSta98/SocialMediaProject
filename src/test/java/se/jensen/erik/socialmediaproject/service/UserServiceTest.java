@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import se.jensen.erik.socialmediaproject.dto.UserRequestDto;
 import se.jensen.erik.socialmediaproject.dto.UserResponseDto;
-import se.jensen.erik.socialmediaproject.mapper.UserMapper;
+
 import se.jensen.erik.socialmediaproject.model.User;
 import se.jensen.erik.socialmediaproject.repository.UserRepository;
 
@@ -29,6 +29,10 @@ public class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * Test för att verifiera att getById-metoden returnerar korrekt användardata när användaren finns.
+     * Verifierar att en användare kan hämtas korrekt.
+     */
     @Test
     public void testGetById_Success() {
         // Arrange
@@ -54,6 +58,11 @@ public class UserServiceTest {
         verify(userRepository, times(1)).findById(userId);
     }
 
+    /**
+     * Test för att verifiera att getById-metoden kastar ett undantag
+     * Och rätt undantag(Exception) när användaren inte finns.
+     *
+     */
     @Test
     public void testGetById_NotFound() {
         // Arrange
@@ -65,6 +74,10 @@ public class UserServiceTest {
         verify(userRepository, times(1)).findById(userId);
     }
 
+    /**
+     * Test för att verifiera att addUser-metoden sparar en ny användare korrekt när användarnamn och e-post inte redan finns.
+     * Verifierar att en användare kan läggas till och att lösenordet krypteras korrekt.
+     */
     @Test
     public void testAddUser_Success() {
         // Arrange

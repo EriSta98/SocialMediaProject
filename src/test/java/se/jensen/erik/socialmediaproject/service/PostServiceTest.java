@@ -31,6 +31,10 @@ public class PostServiceTest {
     @Mock
     private UserRepository userRepository;
 
+
+    /**
+     * * Test för att verifiera att createPost-metoden skapar ett inlägg korrekt när användaren finns.
+     */
     @Test
     public void testCreatePost_Success() {
         // Arrange
@@ -57,6 +61,10 @@ public class PostServiceTest {
         verify(postRepository, times(1)).save(any(Post.class));
     }
 
+
+    /**
+     * Test för att verifiera att createPost-metoden kastar ett undantag när användaren inte finns.
+     */
     @Test
     public void testCreatePost_UserNotFound() {
         // Arrange

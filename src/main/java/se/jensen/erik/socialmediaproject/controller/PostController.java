@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping("/posts")
 public class PostController {
 
-    private List<Post> posts = new ArrayList<>();
+    private final List<Post> posts = new ArrayList<>();
 
 
     /**
