@@ -10,9 +10,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+/**
+ * Global felhanterare för applikationen.
+ * Fångar upp specifika undantag och returnerar lämpliga HTTP-svar.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * Hanterar valideringsfel för inkommande requests.
+     * @param ex Undantaget som kastas vid misslyckad validering.
+     * @return En karta med fältnamn och felmeddelanden.
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
 
@@ -28,6 +37,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
+    /**
+     * Hanterar fall där ett efterfrågat element inte hittas.
+     * @param ex Undantaget som kastas.
+     * @return Felmeddelande med status 404.
+     */
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<String> handleNoSuchElement(NoSuchElementException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());

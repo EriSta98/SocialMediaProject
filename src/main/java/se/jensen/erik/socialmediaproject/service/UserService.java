@@ -17,6 +17,9 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 
+/**
+ * Tjänsteklass för hantering av användare.
+ */
 @Service
 public class UserService {
 
@@ -26,12 +29,25 @@ public class UserService {
     private final UserMapper userMapper;
 
 
+    /**
+     * Konstruktor för UserService.
+     * @param userRepository Repository för användare.
+     * @param passwordEncoder Encoder för lösenord.
+     * @param userMapper Mapper för att konvertera mellan entiteter och DTO:er.
+     */
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.userMapper = userMapper;
     }
 
+    /**
+     * Uppdaterar en befintlig användare.
+     * @param id ID för användaren som ska uppdateras.
+     * @param dto Ny data för användaren.
+     * @return En UserResponseDto med den uppdaterade användaren.
+     * @throws RuntimeException Om användaren inte hittas.
+     */
     public UserResponseDto update(Long id, UserRequestDto dto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> {
@@ -52,11 +68,21 @@ public class UserService {
     }
 
 
+    /**
+     * Raderar en användare baserat på ID.
+     * @param id Användarens ID.
+     */
     public void delete(Long id) {
         userRepository.deleteById(id);
     }
 
 
+    /**
+     * Hämtar alla användare i systemet.
+     * @return En lista med UserResponseDto för alla användare.
+     * @throws RuntimeException Om inga användare hittas.
+     * @throws IllegalArgumentException Om exakt en användare hittas (specifik affärslogik).
+     */
     public List<UserResponseDto> getAllUsers() {
         List<User> users = userRepository.findAll();
 
@@ -70,6 +96,12 @@ public class UserService {
     }
 
 
+    /**
+     * Hämtar en användare baserat på ID.
+     * @param id Användarens ID.
+     * @return UserResponseDto för den hittade användaren.
+     * @throws NoSuchElementException Om användaren inte hittas.
+     */
     public UserResponseDto getById(Long id){
         Optional<User> opt = userRepository.findById(id);
 
@@ -81,6 +113,12 @@ public class UserService {
     }
 
 
+    /**
+     * Lägger till en ny användare i systemet.
+     * @param userDto Data för den nya användaren.
+     * @return UserResponseDto för den skapade användaren.
+     * @throws IllegalArgumentException Om användarnamn eller e-post redan finns.
+     */
     public UserResponseDto addUser(UserRequestDto userDto) {
         User user = UserMapper.fromDto(userDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -103,10 +141,20 @@ public class UserService {
     }
 
 
+    /**
+     * Hjälpmetod för att konvertera en användare till DTO.
+     * @param user Användaren.
+     * @return En UserResponseDto.
+     */
     private UserResponseDto toDto(User user){
         return UserMapper.toDto(user);
     }
 
+    /**
+     * Hjälpmetod för att skapa en användare från DTO.
+     * @param userDto DTO:n.
+     * @return En User-entitet.
+     */
     private User fromDto(UserRequestDto userDto){
         User user = new User();
         user.setBio(userDto.bio());
@@ -119,6 +167,12 @@ public class UserService {
         return user;
     }
 
+    /**
+     * Hämtar en användare tillsammans med dess inlägg.
+     * @param id Användarens ID.
+     * @return En UserWithPostsResponseDto.
+     * @throws NoSuchElementException Om användaren inte hittas.
+     */
     public UserWithPostsResponseDto getUserWithPosts(Long id) {
         User user = userRepository.findUserWithPosts(id)
                 .orElseThrow(() -> {

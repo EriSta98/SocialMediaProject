@@ -15,6 +15,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * Tjänsteklass för hantering av inlägg (posts).
+ */
 @Service
 public class PostService {
 
@@ -23,11 +26,23 @@ public class PostService {
     private final PostRepository postRepository;
 
 
+    /**
+     * Konstruktor för PostService.
+     * @param userRepository Repository för användare.
+     * @param postRepository Repository för inlägg.
+     */
     public PostService(UserRepository userRepository, PostRepository postRepository) {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
     }
 
+    /**
+     * Skapar ett nytt inlägg för en specifik användare.
+     * @param userId ID för användaren som skapar inlägget.
+     * @param postDTO Data för det nya inlägget.
+     * @return En PostResponseDto med det sparade inlägget.
+     * @throws NoSuchElementException Om användaren inte hittas.
+     */
     public PostResponseDto createPost(Long userId, PostRequestDto postDTO){
         Post post = new Post();
         post.setText(postDTO.text());
@@ -47,6 +62,10 @@ public class PostService {
 
     }
 
+    /**
+     * Hämtar alla inlägg.
+     * @return En lista med alla Post-entiteter.
+     */
     public List<Post> getAllPosts(){
         return postRepository.findAll();
     }

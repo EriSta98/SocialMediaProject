@@ -10,20 +10,39 @@ import se.jensen.erik.socialmediaproject.dto.UserRequestDto;
 
 import java.util.List;
 
+/**
+ * Mapper-klass för att konvertera mellan användar-DTO:er och entiteter.
+ */
 @Component
 public class UserMapper {
 
+    /**
+     * Skapar en User-entitet från en UserRequestDto.
+     * @param dto Data för den nya användaren.
+     * @return En ny User-entitet.
+     */
     public static User fromDto(UserRequestDto dto) {
         User user = new User();
         setUserValues(user, dto);
         return user;
     }
 
+    /**
+     * Uppdaterar en befintlig User-entitet med värden från en UserRequestDto.
+     * @param user Den befintliga entiteten.
+     * @param dto Ny data.
+     * @return Den uppdaterade entiteten.
+     */
     public User fromDto(User user, UserRequestDto dto) {
         setUserValues(user, dto);
         return user;
     }
 
+    /**
+     * Sätter värden på en User-entitet från en UserRequestDto.
+     * @param user Entiteten som ska uppdateras.
+     * @param dto DTO:n med värden.
+     */
     private static void setUserValues(User user, UserRequestDto dto) {
         user.setProfileImagePath(dto.profileImagePath());
         user.setRole(dto.role());
@@ -34,6 +53,11 @@ public class UserMapper {
         user.setDisplayName(dto.displayName());
     }
 
+    /**
+     * Konverterar en User-entitet till UserWithPostsResponseDto.
+     * @param user Användaren inklusiv inlägg.
+     * @return En UserWithPostsResponseDto.
+     */
     public static UserWithPostsResponseDto toWithPostsDto(User user) {
         if (user == null) {
             return null;
@@ -55,6 +79,11 @@ public class UserMapper {
         return new UserWithPostsResponseDto(userDto, postDtos);
     }
 
+    /**
+     * Konverterar en User-entitet till UserResponseDto.
+     * @param user Användarentiteten.
+     * @return En UserResponseDto.
+     */
     public static UserResponseDto toDto(User user) {
         return new UserResponseDto(
                 user.getId(),

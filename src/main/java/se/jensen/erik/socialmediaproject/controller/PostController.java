@@ -15,6 +15,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller för hantering av inlägg (posts).
+ */
 @RestController
 @RequestMapping("/posts")
 public class PostController {
@@ -22,7 +25,11 @@ public class PostController {
     private List<Post> posts = new ArrayList<>();
 
 
-    //Lägg till en post
+    /**
+     * Skapar ett nytt inlägg.
+     * @param dto Data för det nya inlägget.
+     * @return En ResponseEntity med det skapade inlägget.
+     */
     @PostMapping
     public ResponseEntity<PostResponseDto> createPost(@Valid @RequestBody PostRequestDto dto) {
 
@@ -43,7 +50,11 @@ public class PostController {
     }
 
 
-    // Hämta en post med specifikt ID
+    /**
+     * Hämtar alla inlägg för en specifik användare.
+     * @param userId Användarens ID.
+     * @return En lista med inlägg.
+     */
     @GetMapping("/{userId}")
     public ResponseEntity<List<PostResponseDto>> getPostById(@PathVariable int userId) {
 
@@ -63,7 +74,10 @@ public class PostController {
     }
 
 
-    // Hämta alla posts
+    /**
+     * Hämtar alla inlägg.
+     * @return En lista med alla inlägg.
+     */
     @GetMapping
     public ResponseEntity<List<PostResponseDto>> getAllPosts() {
         List<PostResponseDto> response =
@@ -77,7 +91,12 @@ public class PostController {
     }
 
 
-    //Uppdatera en post
+    /**
+     * Uppdaterar ett befintligt inlägg.
+     * @param userId ID för det inlägg som ska uppdateras.
+     * @param dto Ny data för inlägget.
+     * @return En ResponseEntity med det uppdaterade inlägget.
+     */
     @PutMapping("/{userId}")
     public ResponseEntity<PostResponseDto> updatePost(
             @PathVariable int userId,
@@ -109,7 +128,11 @@ public class PostController {
     }
 
 
-    //Radera post
+    /**
+     * Raderar ett inlägg.
+     * @param userId ID för det inlägg som ska raderas.
+     * @return En ResponseEntity med bekräftelse på radering.
+     */
     @DeleteMapping("/{userId}")
     public ResponseEntity<String> deletePost(@PathVariable int userId){
         Post p = posts.stream()

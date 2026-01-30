@@ -11,6 +11,9 @@ import se.jensen.erik.socialmediaproject.service.UserService;
 
 import java.util.List;
 
+/**
+ * Controller för hantering av användare.
+ */
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -21,6 +24,11 @@ public class UserController {
     private final PostService postService;
 
 
+    /**
+     * Konstruktor för UserController.
+     * @param service Tjänst för användarhantering.
+     * @param postService Tjänst för inläggshantering.
+     */
     public UserController(UserService service, PostService postService) {
         this.service = service;
         this.postService = postService;
@@ -29,6 +37,10 @@ public class UserController {
 
 
 
+    /**
+     * Hämtar alla användare.
+     * @return En lista med alla användare.
+     */
     @GetMapping
     public ResponseEntity<List<UserResponseDto>> getAll() {
         List<UserResponseDto> allUsers = service.getAllUsers();
@@ -36,6 +48,11 @@ public class UserController {
     }
 
 
+    /**
+     * Hämtar en användare baserat på ID.
+     * @param id Användarens ID.
+     * @return Den hittade användaren.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getById(@PathVariable Long id) {
         UserResponseDto userResponseDTO = service.getById(id);
@@ -43,6 +60,11 @@ public class UserController {
     }
 
 
+    /**
+     * Skapar en ny användare.
+     * @param dto Data för den nya användaren.
+     * @return Den skapade användaren.
+     */
     @PostMapping
     public ResponseEntity<UserResponseDto> create(@RequestBody UserRequestDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.addUser(dto));
@@ -50,12 +72,23 @@ public class UserController {
 
 
 
+    /**
+     * Uppdaterar en befintlig användare.
+     * @param id ID för den användare som ska uppdateras.
+     * @param dto Ny data för användaren.
+     * @return Den uppdaterade användaren.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDto> update(@PathVariable Long id, @RequestBody UserRequestDto dto) {
         return ResponseEntity.ok().body(service.update(id, dto));
     }
 
 
+    /**
+     * Raderar en användare.
+     * @param id ID för den användare som ska raderas.
+     * @return En tom ResponseEntity med status 204.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
@@ -63,6 +96,12 @@ public class UserController {
     }
 
 
+    /**
+     * Skapar ett nytt inlägg för en specifik användare.
+     * @param userId Användarens ID.
+     * @param request Data för det nya inlägget.
+     * @return Det skapade inlägget.
+     */
     @PostMapping("/{userId}/posts")
     public ResponseEntity<PostResponseDto> createPostForUser(
             @PathVariable Long userId,
@@ -75,6 +114,11 @@ public class UserController {
     }
 
 
+    /**
+     * Hämtar en användare inklusiv dess inlägg.
+     * @param id Användarens ID.
+     * @return Användaren med dess inlägg.
+     */
     @GetMapping("/{id}/with-posts")
     public ResponseEntity<UserWithPostsResponseDto> getUserWithPosts(@PathVariable Long id) {
 

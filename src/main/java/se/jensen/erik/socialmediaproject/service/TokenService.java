@@ -11,13 +11,26 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.stream.Collectors;
 
+/**
+ * Tjänsteklass för generering av JWT-tokens.
+ */
 @Service
 public class TokenService {
     private final JwtEncoder jwtEncoder;
+
+    /**
+     * Konstruktor för TokenService.
+     * @param jwtEncoder Encoder för att skapa JWT.
+     */
     public TokenService(JwtEncoder jwtEncoder) {
         this.jwtEncoder = jwtEncoder;
     }
 
+    /**
+     * Genererar en JWT-token för en autentiserad användare.
+     * @param authentication Autentiseringsobjekt som innehåller användarens uppgifter.
+     * @return En signerad JWT-token som sträng.
+     */
     public String generateToken(Authentication authentication) {
 
         Instant now = Instant.now();

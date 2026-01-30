@@ -13,6 +13,9 @@ import se.jensen.erik.socialmediaproject.dto.LoginResponseDTO;
 import se.jensen.erik.socialmediaproject.security.MyUserDetails;
 import se.jensen.erik.socialmediaproject.service.TokenService;
 
+/**
+ * Controller för hantering av autentisering och utfärdande av tokens.
+ */
 @RestController
 @RequestMapping("/request-token")
 public class AuthController {
@@ -21,12 +24,22 @@ public class AuthController {
     private final TokenService tokenService;
 
 
+    /**
+     * Konstruktor för AuthController.
+     * @param authenticationManager Manager för att hantera autentisering.
+     * @param tokenService Tjänst för att generera JWT-tokens.
+     */
     public AuthController(AuthenticationManager authenticationManager, TokenService tokenService) {
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
     }
 
 
+    /**
+     * Autentiserar en användare och returnerar en JWT-token.
+     * @param loginRequest Inloggningsuppgifter (användarnamn och lösenord).
+     * @return En ResponseEntity innehållande token och användar-ID.
+     */
     @PostMapping
     public ResponseEntity<LoginResponseDTO> token(
             @RequestBody LoginRequestDTO loginRequest) {

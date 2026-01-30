@@ -5,6 +5,16 @@ import jakarta.validation.constraints.NotBlank;
 
 import jakarta.validation.constraints.Size;
 
+/**
+ * Data Transfer Object för att skapa eller uppdatera en användare.
+ * @param username Användarnamn.
+ * @param password Lösenord.
+ * @param role Roll (t.ex. USER eller ADMIN).
+ * @param displayName Visningsnamn.
+ * @param profileImagePath Sökväg till profilbild.
+ * @param email E-postadress.
+ * @param bio Kort biografi.
+ */
 public record UserRequestDto(
         @NotBlank(message = "Namn får inte vara tom.")
         @Size(max = 30)

@@ -38,11 +38,19 @@ import java.util.Base64;
 import java.util.List;
 
 
+/**
+ * Konfigurationsklass för applikationssäkerhet.
+ * Ställer in CORS, CSRF, autentisering och JWT-hantering.
+ */
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
 
 
+    /**
+     * Konfigurerar CORS (Cross-Origin Resource Sharing).
+     * @return CorsConfigurationSource med tillåtna ursprung och metoder.
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
@@ -73,9 +81,17 @@ public class SecurityConfig {
 
 
 
+    /**
+     * Konstruktor för SecurityConfig.
+     * @param detailsService Tjänst för användaruppgifter.
+     */
     public SecurityConfig(DetailsService detailsService) {
     }
 
+    /**
+     * Bean för lösenordskryptering.
+     * @return BCryptPasswordEncoder.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -111,6 +127,13 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Skapar ett KeyPair från de konfigurerade RSA-nycklarna.
+     * @param privateKey Base64-kodad privat nyckel.
+     * @param publicKey Base64-kodad publik nyckel.
+     * @return Ett KeyPair-objekt.
+     * @throws Exception Om nyckelgenereringen misslyckas.
+     */
     @Bean
     public KeyPair keyPair(
             @Value("${jwt.private-key}") String privateKey,
@@ -128,6 +151,11 @@ public class SecurityConfig {
         return new KeyPair(pubKey, privKey);
     }
 
+    /**
+     * Konfigurerar JWKSource för JWT-signering.
+     * @param keyPair RSA-nyckelparet.
+     * @return En JWKSource.
+     */
     @Bean
     public JWKSource<SecurityContext> jwkSource(KeyPair keyPair) {
         RSAKey rsaKey = new RSAKey.Builder((RSAPublicKey) keyPair.getPublic())
@@ -138,11 +166,21 @@ public class SecurityConfig {
         return (jwkSelector, context) -> jwkSelector.select(jwkSet);
     }
 
+    /**
+     * Bean för att koda JWT-tokens.
+     * @param jwkSource Källan för JWK.
+     * @return En JwtEncoder.
+     */
     @Bean
     public JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwkSource) {
         return new NimbusJwtEncoder(jwkSource);
     }
 
+    /**
+     * Bean för att avkoda JWT-tokens.
+     * @param keyPair RSA-nyckelparet (publik del).
+     * @return En JwtDecoder.
+     */
     @Bean
     public JwtDecoder jwtDecoder(KeyPair keyPair) {
         return NimbusJwtDecoder
@@ -150,6 +188,10 @@ public class SecurityConfig {
                 .build();
     }
 
+    /**
+     * Konfigurerar hur JWT-anspråk (claims) omvandlas till myndigheter (authorities) i Spring Security.
+     * @return En JwtAuthenticationConverter.
+     */
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter converter =
@@ -162,6 +204,12 @@ public class SecurityConfig {
         return authenticationConverter;
     }
 
+    /**
+     * Exponerar AuthenticationManager som en Bean.
+     * @param configuration Autentiseringskonfiguration.
+     * @return AuthenticationManager.
+     * @throws Exception Om konfigurationen misslyckas.
+     */
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration configuration) throws Exception {
