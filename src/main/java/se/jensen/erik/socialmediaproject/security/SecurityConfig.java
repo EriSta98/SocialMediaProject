@@ -178,7 +178,7 @@ public class SecurityConfig {
 
     /**
      * Bean för att avkoda JWT-tokens.
-     * @param keyPair RSA-nyckelparet (publik del).
+     * @param keyPair RSA-nyckelparet
      * @return En JwtDecoder.
      */
     @Bean
@@ -208,7 +208,6 @@ public class SecurityConfig {
      * Exponerar AuthenticationManager som en Bean.
      * @param configuration Autentiseringskonfiguration.
      * @return AuthenticationManager.
-     * @throws Exception Om konfigurationen misslyckas.
      */
     @Bean
     public AuthenticationManager authenticationManager(
