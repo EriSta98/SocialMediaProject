@@ -26,19 +26,16 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserMapper userMapper;
 
 
     /**
      * Konstruktor för UserService.
      * @param userRepository Repository för användare.
      * @param passwordEncoder Encoder för lösenord.
-     * @param userMapper Mapper för att konvertera mellan entiteter och DTO:er.
      */
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.userMapper = userMapper;
     }
 
     /**
@@ -57,7 +54,7 @@ public class UserService {
 
 
         user.setUsername(dto.username());
-        user.setPassword(dto.password());
+        user.setPassword(passwordEncoder.encode(dto.password()));
         user.setRole(dto.role());
         user.setDisplayName(dto.displayName());
         user.setProfileImagePath(dto.profileImagePath());
@@ -80,19 +77,10 @@ public class UserService {
     /**
      * Hämtar alla användare i systemet.
      * @return En lista med UserResponseDto för alla användare.
-     * @throws RuntimeException Om inga användare hittas.
-     * @throws IllegalArgumentException Om exakt en användare hittas (specifik affärslogik).
      */
     public List<UserResponseDto> getAllUsers() {
         List<User> users = userRepository.findAll();
-
-        if (users.isEmpty()){
-            logger.info("No users found in database");
-            throw new RuntimeException("No Users found in database");
-        } else if(users.size() == 1){
-            throw new IllegalArgumentException("Only one user found in database.");
-        }
-        return users.stream().map(user -> userMapper.toDto(user)).toList();
+        return users.stream().map(user -> UserMapper.toDto(user)).toList();
     }
 
 
@@ -121,7 +109,9 @@ public class UserService {
      */
     public UserResponseDto addUser(UserRequestDto userDto) {
         User user = UserMapper.fromDto(userDto);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        logger.info("[DEBUG_LOG] Encoding password for new user {}. Plain: {}, Encoded: {}", user.getUsername(), user.getPassword(), encodedPassword);
+        user.setPassword(encodedPassword);
         boolean exists = userRepository.existsByUsernameOrEmail(
                 user.getUsername(),
                 user.getEmail()

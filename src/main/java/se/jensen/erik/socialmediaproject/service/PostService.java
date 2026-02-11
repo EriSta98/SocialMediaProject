@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
- * Tjänsteklass för hantering av inlägg (posts).
+ * Klass för hantering av inlägg (posts).
  */
 @Service
 public class PostService {
@@ -70,6 +70,54 @@ public class PostService {
         return postRepository.findAll();
     }
 
+    /**
+     * Hämtar inlägg för en specifik användare.
+     * @param userId Användarens ID.
+     * @return En lista med PostResponseDto.
+     */
+    public List<PostResponseDto> getPostsByUserId(Long userId) {
+        List<Post> posts = postRepository.findByUserId(userId);
+        if (posts.isEmpty()) {
+            return List.of();
+        }
+        return posts.stream()
+                .map(post -> new PostResponseDto(post.getId(), post.getText(), post.getCreatedAt()))
+                .toList();
+    }
 
+    /**
+     * Uppdaterar ett inlägg.
+     * @param postId ID för inlägget.
+     * @param dto Ny data.
+     * @param currentUserId ID för den inloggade användaren.
+     * @return Den uppdaterade posten.
+     */
+    public PostResponseDto updatePost(Long postId, PostRequestDto dto, Long currentUserId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NoSuchElementException("Post not found"));
 
+        if (!post.getUser().getId().equals(currentUserId)) {
+            throw new RuntimeException("You are not authorized to update this post");
+        }
+
+        post.setText(dto.text());
+        Post updated = postRepository.save(post);
+        return new PostResponseDto(updated.getId(), updated.getText(), updated.getCreatedAt());
+    }
+
+    /**
+     * Raderar ett inlägg.
+     * @param postId ID för inlägget.
+     * @param currentUserId ID för den inloggade användaren.
+     */
+    public void deletePost(Long postId, Long currentUserId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NoSuchElementException("Post not found"));
+
+        if (!post.getUser().getId().equals(currentUserId)) {
+            throw new RuntimeException("You are not authorized to delete this post");
+        }
+
+        postRepository.delete(post);
+    }
 }

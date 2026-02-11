@@ -1,5 +1,7 @@
 package se.jensen.erik.socialmediaproject.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,6 +15,7 @@ import se.jensen.erik.socialmediaproject.repository.UserRepository;
 @Service
 public class DetailsService implements UserDetailsService {
 
+    private static final Logger logger = LoggerFactory.getLogger(DetailsService.class);
     private final UserRepository userRepository;
 
     /**
@@ -33,11 +36,15 @@ public class DetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
 
+        logger.info("[DEBUG_LOG] Attempting to load user by username: {}", username);
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("User not found: " + username));
+                .orElseThrow(() -> {
+                    logger.warn("[DEBUG_LOG] User not found: {}", username);
+                    return new UsernameNotFoundException("User not found: " + username);
+                });
 
 
+        logger.info("[DEBUG_LOG] User found: {}, role: {}, encoded password: {}", username, user.getRole(), user.getPassword());
         return new MyUserDetails(user);
     }
 
