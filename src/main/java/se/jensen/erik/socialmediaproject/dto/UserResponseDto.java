@@ -32,11 +32,11 @@ public record UserResponseDto(
         return new UserResponseDto(
                 user.getId(),
                 user.getUsername(),
-                user.getEmail(),
                 user.getRole(),
                 user.getDisplayName(),
-                user.getBio(),
-                user.getProfileImagePath()
+                user.getProfileImagePath(),
+                user.getEmail(),
+                user.getBio()
         );
     }
 

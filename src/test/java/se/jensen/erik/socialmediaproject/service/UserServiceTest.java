@@ -12,6 +12,8 @@ import se.jensen.erik.socialmediaproject.dto.UserResponseDto;
 import se.jensen.erik.socialmediaproject.model.User;
 import se.jensen.erik.socialmediaproject.repository.UserRepository;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -59,9 +61,7 @@ public class UserServiceTest {
     }
 
     /**
-     * Test för att verifiera att getById-metoden kastar ett undantag
-     * Och rätt undantag(Exception) när användaren inte finns.
-     *
+     * Test för att verifiera att getById-metoden kastar ett undantag när användaren inte finns.
      */
     @Test
     public void testGetById_NotFound() {
@@ -105,5 +105,33 @@ public class UserServiceTest {
         assertEquals("Sven", result.username());
         assertEquals("sven@example.com", result.email());
         verify(userRepository, times(1)).save(any(User.class));
+    }
+
+
+    /**
+     * Test för att se så att service metoden inte kastar exception vid tom lista,
+     * service metoden inte returnerar null,
+     * och service metoden visar en tom lista
+     */
+    @Test
+    public void testGetAllUsers_Empty() {
+        when(userRepository.findAll()).thenReturn(Collections.emptyList());
+        List<UserResponseDto> result = userService.getAllUsers();
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Testar så att Repo returnerar en användare, service hämtar den korrekt, mappar korrekt,
+     * att listan innehåller exakt en post och username värdet stämmer
+     */
+    @Test
+    public void testGetAllUsers_Single() {
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("SingleUser");
+        when(userRepository.findAll()).thenReturn(List.of(user));
+        List<UserResponseDto> result = userService.getAllUsers();
+        assertEquals(1, result.size());
+        assertEquals("SingleUser", result.get(0).username());
     }
 }

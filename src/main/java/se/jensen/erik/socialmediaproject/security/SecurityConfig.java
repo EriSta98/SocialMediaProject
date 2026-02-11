@@ -10,6 +10,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -43,6 +46,7 @@ import java.util.List;
  * Ställer in CORS, CSRF, autentisering och JWT-hantering.
  */
 @Configuration
+@EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
@@ -81,11 +85,14 @@ public class SecurityConfig {
 
 
 
+    private final DetailsService detailsService;
+
     /**
      * Konstruktor för SecurityConfig.
      * @param detailsService Tjänst för användaruppgifter.
      */
     public SecurityConfig(DetailsService detailsService) {
+        this.detailsService = detailsService;
     }
 
     /**
@@ -109,20 +116,28 @@ public class SecurityConfig {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
         http.csrf(csrf -> csrf.disable());
 
-                http.sessionManagement(session ->
+        http.sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/request-token").permitAll()
-                        .anyRequest().authenticated()
-                );
+        );
 
-                http.oauth2ResourceServer(oauth2 ->
-                oauth2.jwt(jwt ->
-                        jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                );
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/v3/api-docs").permitAll()
+                .requestMatchers("/request-token").permitAll()
+                .requestMatchers("/error").permitAll()
+                .anyRequest().authenticated()
+        );
+
+        http.oauth2ResourceServer(oauth2 -> oauth2
+                .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                .authenticationEntryPoint((request, response, authException) -> {
+                    if (request.getServletPath().equals("/request-token")) {
+                        response.sendError(400, "Bad Request: " + authException.getMessage());
+                        return;
+                    }
+                    response.sendError(401, authException.getMessage());
+                })
+        );
 
         return http.build();
     }
@@ -189,7 +204,7 @@ public class SecurityConfig {
     }
 
     /**
-     * Konfigurerar hur JWT-anspråk (claims) omvandlas till myndigheter (authorities) i Spring Security.
+     * Konfigurerar hur JWT-anspråk omvandlas till "authorities" i Spring Security.
      * @return En JwtAuthenticationConverter.
      */
     @Bean
@@ -213,6 +228,13 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(detailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
     }
 
 

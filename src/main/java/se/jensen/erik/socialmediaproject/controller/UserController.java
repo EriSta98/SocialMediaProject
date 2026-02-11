@@ -2,11 +2,12 @@ package se.jensen.erik.socialmediaproject.controller;
 
 import jakarta.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.jensen.erik.socialmediaproject.dto.*;
-import se.jensen.erik.socialmediaproject.service.PostService;
 import se.jensen.erik.socialmediaproject.service.UserService;
 
 import java.util.List;
@@ -18,20 +19,17 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
-
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService service;
 
-    private final PostService postService;
 
 
     /**
      * Konstruktor för UserController.
      * @param service Tjänst för användarhantering.
-     * @param postService Tjänst för inläggshantering.
      */
-    public UserController(UserService service, PostService postService) {
+    public UserController(UserService service) {
         this.service = service;
-        this.postService = postService;
     }
 
 
@@ -66,14 +64,19 @@ public class UserController {
      * @return Den skapade användaren.
      */
     @PostMapping
-    public ResponseEntity<UserResponseDto> create(@RequestBody UserRequestDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.addUser(dto));
+    public ResponseEntity<UserResponseDto> create(@Valid @RequestBody UserRequestDto dto) {
+        logger.info("[DEBUG_LOG] Creating user: {}", dto.username());
+        UserResponseDto response = service.addUser(dto);
+        logger.info("[DEBUG_LOG] User created successfully: {}", response.username());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
 
 
     /**
      * Uppdaterar en befintlig användare.
+     * Man kan för tillfället uppdatera andra användare utan att logga in som dom.
+     * Kommer lämna det så för debug anledningar.
      * @param id ID för den användare som ska uppdateras.
      * @param dto Ny data för användaren.
      * @return Den uppdaterade användaren.
@@ -96,22 +99,6 @@ public class UserController {
     }
 
 
-    /**
-     * Skapar ett nytt inlägg för en specifik användare.
-     * @param userId Användarens ID.
-     * @param request Data för det nya inlägget.
-     * @return Det skapade inlägget.
-     */
-    @PostMapping("/{userId}/posts")
-    public ResponseEntity<PostResponseDto> createPostForUser(
-            @PathVariable Long userId,
-            @Valid @RequestBody PostRequestDto request
-    ) {
-
-        PostResponseDto response = postService.createPost(userId, request);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
 
 
     /**
