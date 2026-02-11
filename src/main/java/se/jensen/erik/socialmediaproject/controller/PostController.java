@@ -101,8 +101,10 @@ public class PostController {
 
 
     /**
-     *
-     * @param authentication utentiseringsinformation för den inloggade användaren.
+     * Hämtar aktuell användares ID från autentiseringsinformationen.
+     * Mer specifikt denna metod tar dom 2 typerna av autentisering i programmet, JWT och MyUserDetails,
+     * och gör dom till ett internt användar-id så logiken slipper bry sig om detaljer.
+     * @param authentication autentiseringsinformation för den inloggade användaren.
      * @return details.getId, returnerar userID värdet efter long konvertering
      */
 
