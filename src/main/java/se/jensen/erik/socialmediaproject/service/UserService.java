@@ -124,8 +124,6 @@ public class UserService {
             );
         }
 
-
-
         User savedUser = userRepository.save(user);
         return toDto(savedUser);
     }
@@ -140,22 +138,7 @@ public class UserService {
         return UserMapper.toDto(user);
     }
 
-    /**
-     * Hjälpmetod för att skapa en användare från DTO.
-     * @param userDto DTO:n.
-     * @return En User-entitet.
-     */
-    private User fromDto(UserRequestDto userDto){
-        User user = new User();
-        user.setBio(userDto.bio());
-        user.setDisplayName(userDto.displayName());
-        user.setEmail(userDto.email());
-        user.setPassword(userDto.password());
-        user.setRole(userDto.role());
-        user.setProfileImagePath(userDto.profileImagePath());
-        user.setUsername(userDto.username());
-        return user;
-    }
+
 
     /**
      * Hämtar en användare tillsammans med dess inlägg.

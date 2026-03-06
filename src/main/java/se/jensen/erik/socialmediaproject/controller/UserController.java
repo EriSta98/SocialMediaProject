@@ -34,7 +34,6 @@ public class UserController {
 
 
 
-
     /**
      * Hämtar alla användare.
      * @return En lista med alla användare.
@@ -65,9 +64,12 @@ public class UserController {
      */
     @PostMapping
     public ResponseEntity<UserResponseDto> create(@Valid @RequestBody UserRequestDto dto) {
+
         logger.info("[DEBUG_LOG] Creating user: {}", dto.username());
+
         UserResponseDto response = service.addUser(dto);
         logger.info("[DEBUG_LOG] User created successfully: {}", response.username());
+
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

@@ -9,11 +9,11 @@ import jakarta.validation.constraints.*;
  * @param id Relaterat ID (t.ex. användar-ID eller inläggs-ID beroende på kontext).
  */
 public record PostRequestDto(
-        @NotBlank(message = "Text får inte vara tom.")
+        @NotBlank(message = "Text cannot be empty.")
         @Size(min = 3, max = 200)
         String text,
 
-        @NotNull(message = "ID får inte vara null")
+        @NotNull(message = "ID cannot be null")
         @PositiveOrZero
         Long id) {
 }

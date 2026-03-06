@@ -34,9 +34,7 @@ public class PostController {
      * @return Det skapade inlägget.
      */
     @PostMapping("/posts/user/{userId}")
-    public ResponseEntity<PostResponseDto> createPostForUser(
-            @PathVariable Long userId,
-            @Valid @RequestBody PostRequestDto request
+    public ResponseEntity<PostResponseDto> createPostForUser(@PathVariable Long userId, @Valid @RequestBody PostRequestDto request
     ) {
         PostResponseDto response = postService.createPost(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

@@ -27,16 +27,6 @@ public class UserMapper {
         return user;
     }
 
-    /**
-     * Uppdaterar en befintlig User-entitet med värden från en UserRequestDto.
-     * @param user Den befintliga entiteten.
-     * @param dto Ny data.
-     * @return Den uppdaterade entiteten.
-     */
-    public User fromDto(User user, UserRequestDto dto) {
-        setUserValues(user, dto);
-        return user;
-    }
 
     /**
      * Sätter värden på en User-entitet från en UserRequestDto.
@@ -55,7 +45,7 @@ public class UserMapper {
 
     /**
      * Konverterar en User-entitet till UserWithPostsResponseDto.
-     * @param user Användaren inklusiv inlägg.
+     * @param user Användaren inklusive inlägg.
      * @return En UserWithPostsResponseDto.
      */
     public static UserWithPostsResponseDto toWithPostsDto(User user) {

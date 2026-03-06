@@ -44,9 +44,6 @@ public class PostService {
      * @throws NoSuchElementException Om användaren inte hittas.
      */
     public PostResponseDto createPost(Long userId, PostRequestDto postDTO){
-        Post post = new Post();
-        post.setText(postDTO.text());
-        post.setCreatedAt(LocalDateTime.now());
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
@@ -55,6 +52,9 @@ public class PostService {
                     return new NoSuchElementException(message);
                 });
 
+        Post post = new Post();
+        post.setText(postDTO.text());
+        post.setCreatedAt(LocalDateTime.now());
 
         post.setUser(user);
         Post fromDb = postRepository.save(post);

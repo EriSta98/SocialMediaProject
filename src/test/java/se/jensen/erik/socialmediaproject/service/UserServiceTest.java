@@ -110,7 +110,7 @@ public class UserServiceTest {
 
     /**
      * Test för att se så att service metoden inte kastar exception vid tom lista,
-     * service metoden inte returnerar null,
+     * och att service metoden inte returnerar null,
      * och service metoden visar en tom lista
      */
     @Test

@@ -8,12 +8,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.naming.AuthenticationException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
- * Global felhanterare för applikationen.
+ * Global felhanterare
  * Fångar upp specifika undantag och returnerar lämpliga HTTP-svar.
  */
 @RestControllerAdvice
@@ -24,7 +25,7 @@ public class GlobalExceptionHandler {
     /**
      * Hanterar valideringsfel för inkommande requests.
      * @param ex Undantaget som kastas vid misslyckad validering.
-     * @return En karta med fältnamn och felmeddelanden.
+     * @return En lista/karta med fältnamn och felmeddelanden.
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
@@ -72,6 +73,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleGeneralException(Exception ex) {
         logger.error("Unhandled exception: ", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Ett oväntat fel uppstod: " + ex.getMessage());
+                .body("An unexpected error occurred: " + ex.getMessage());
+    }
+
+    /**
+     * Hanterar autentiseringsfel.
+     * @param ex Undantaget.
+     * @return Felmeddelande med status 401.
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<String> handleAuthException(AuthenticationException ex) {
+        logger.error("Authentication error: ", ex);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body("Authentication failed: " + ex.getMessage());
     }
 }

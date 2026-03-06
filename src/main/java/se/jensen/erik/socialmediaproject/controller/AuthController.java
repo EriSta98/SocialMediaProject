@@ -20,7 +20,6 @@ import se.jensen.erik.socialmediaproject.service.TokenService;
 @RequestMapping("/request-token")
 public class AuthController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
 
@@ -42,11 +41,8 @@ public class AuthController {
      * @return En ResponseEntity innehållande token och användar-ID.
      */
     @PostMapping
-    public ResponseEntity<?> token(
-            @RequestBody LoginRequestDTO loginRequest) {
+    public ResponseEntity<LoginResponseDTO> token(@RequestBody LoginRequestDTO loginRequest) {
 
-        try {
-            logger.info("[DEBUG_LOG] Attempting authentication for user: {}", loginRequest.username());
             Authentication auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             loginRequest.username(),
@@ -55,15 +51,9 @@ public class AuthController {
             );
 
             MyUserDetails details = (MyUserDetails) auth.getPrincipal();
-
             String token = tokenService.generateToken(auth);
 
-            logger.info("[DEBUG_LOG] Authentication successful for user: {}", loginRequest.username());
             return ResponseEntity.ok(new LoginResponseDTO(token, details.getId()));
-        } catch (AuthenticationException e) {
-            logger.warn("[DEBUG_LOG] Authentication failed for user: {}. Reason: {}", loginRequest.username(), e.getMessage());
-            return ResponseEntity.status(401).body("Invalid username or password");
-        }
     }
 
 
